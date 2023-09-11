@@ -30,10 +30,3 @@ REDIS_CONFIG:
 
 TEST_VALUE:
   name: 'test-value'
-
-LOGGER_CONFIG:
-  dir: 'logs'
-  maxFileSize: 2m
-  maxFiles: 15d
-  errorLogName: 'common-error.log'
-  appLogName: 'web.log'

@@ -57,7 +57,7 @@
 
 `"start:dev": "cross-env NODE_ENV=development nest start --watch",`
 
-添加 `.config/.dev.yaml` 配置
+添加 `.config/.development.yaml` 配置
 
 #### 热重载
 
@@ -80,4 +80,24 @@
 2. 创建 `src/doc.ts`
 
 3. 在 `main.ts` 中引入
+
+### 数据库
+
+#### Typeorm
+
+1. 安装 `pnpm i typeorm mysql2 @nestjs/typeorm`
+
+2. 在 `.development.yaml` 添加数据库配置
+
+3. 添加实体 `src/entities/xxx`
+
+4. 初始化数据库 `deploy/sql/init.sql` 和 `docs/权限管理数据库设计文档.md`
+
+5. 连接数据库 `app.module.ts` 配置
+
+### Redis
+
+1. 安装 `pnpm i ioredis`
+
+2. 注册 `shared/shared.module.ts/redis模块`
 
