@@ -14,6 +14,7 @@ import {
   WinstonLogLevel,
 } from '@/shared/logger/logger.instance';
 import { LOGGER_MODULE_OPTIONS } from '@/shared/logger/logger.constants';
+import { WsModule } from './modules/ws/ws.module';
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { LOGGER_MODULE_OPTIONS } from '@/shared/logger/logger.constants';
     }),
     SharedModule,
     AdminModule,
+    WsModule,
   ],
   controllers: [],
   providers: [],

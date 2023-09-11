@@ -1,10 +1,13 @@
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 import { getConfig } from '../utils';
 
-const { MYSQL_CONFIG, REDIS_CONFIG, LOGGER_CONFIG } = getConfig();
+const { MYSQL_CONFIG, REDIS_CONFIG, LOGGER_CONFIG, JWT_CONFIG } = getConfig();
 
 export const getConfiguration = () =>
   ({
+    jwt: {
+      secret: JWT_CONFIG.secret || '123456',
+    },
     database: {
       type: 'mysql',
       host: MYSQL_CONFIG.host,

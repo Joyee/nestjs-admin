@@ -37,3 +37,6 @@ LOGGER_CONFIG:
   maxFiles: 15d
   errorLogName: 'common-error.log'
   appLogName: 'web.log'
+
+JWT_CONFIG:
+  secret: 'admin123456'

@@ -19,7 +19,7 @@ dependencies:
     version: 3.0.1(@nestjs/common@10.2.4)(reflect-metadata@0.1.13)
   '@nestjs/core':
     specifier: ^10.2.4
-    version: 10.2.4(@nestjs/common@10.2.4)(@nestjs/platform-express@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+    version: 10.2.4(@nestjs/common@10.2.4)(@nestjs/platform-express@10.2.4)(@nestjs/websockets@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1)
   '@nestjs/jwt':
     specifier: ^10.1.1
     version: 10.1.1(@nestjs/common@10.2.4)
@@ -35,6 +35,9 @@ dependencies:
   '@nestjs/typeorm':
     specifier: ^10.0.0
     version: registry.npmmirror.com/@nestjs/typeorm@10.0.0(@nestjs/common@10.2.4)(@nestjs/core@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1)(typeorm@0.3.17)
+  '@nestjs/websockets':
+    specifier: ^10.2.4
+    version: registry.npmmirror.com/@nestjs/websockets@10.2.4(@nestjs/common@10.2.4)(@nestjs/core@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1)
   axios:
     specifier: ^1.5.0
     version: 1.5.0
@@ -1052,7 +1055,7 @@ packages:
       uuid: 9.0.0
     dev: false
 
-  /@nestjs/core@10.2.4(@nestjs/common@10.2.4)(@nestjs/platform-express@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1):
+  /@nestjs/core@10.2.4(@nestjs/common@10.2.4)(@nestjs/platform-express@10.2.4)(@nestjs/websockets@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1):
     resolution: {integrity: sha512-aWeii2l+3pNCc9kIRdLbXQMvrgSZD0jZgXOZv7bZwVf9mClMMi7TussLI4On12VbqVE7LE3gsNgRTwgQJlVC8g==}
     requiresBuild: true
     peerDependencies:
@@ -1072,6 +1075,7 @@ packages:
     dependencies:
       '@nestjs/common': 10.2.4(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
       '@nestjs/platform-express': 10.2.4(@nestjs/common@10.2.4)(@nestjs/core@10.2.4)
+      '@nestjs/websockets': registry.npmmirror.com/@nestjs/websockets@10.2.4(@nestjs/common@10.2.4)(@nestjs/core@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1)
       '@nuxtjs/opencollective': 0.3.2
       fast-safe-stringify: 2.1.1
       iterare: 1.2.1
@@ -1119,7 +1123,7 @@ packages:
       '@nestjs/core': ^10.0.0
     dependencies:
       '@nestjs/common': 10.2.4(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
-      '@nestjs/core': 10.2.4(@nestjs/common@10.2.4)(@nestjs/platform-express@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@nestjs/core': 10.2.4(@nestjs/common@10.2.4)(@nestjs/platform-express@10.2.4)(@nestjs/websockets@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1)
       body-parser: 1.20.2
       cors: 2.8.5
       express: 4.18.2
@@ -1177,7 +1181,7 @@ packages:
     dependencies:
       '@fastify/static': 6.11.0
       '@nestjs/common': 10.2.4(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
-      '@nestjs/core': 10.2.4(@nestjs/common@10.2.4)(@nestjs/platform-express@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@nestjs/core': 10.2.4(@nestjs/common@10.2.4)(@nestjs/platform-express@10.2.4)(@nestjs/websockets@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1)
       '@nestjs/mapped-types': 2.0.2(@nestjs/common@10.2.4)(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)
       class-transformer: registry.npmmirror.com/class-transformer@0.5.1
       class-validator: registry.npmmirror.com/class-validator@0.14.0
@@ -1202,7 +1206,7 @@ packages:
         optional: true
     dependencies:
       '@nestjs/common': 10.2.4(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
-      '@nestjs/core': 10.2.4(@nestjs/common@10.2.4)(@nestjs/platform-express@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@nestjs/core': 10.2.4(@nestjs/common@10.2.4)(@nestjs/platform-express@10.2.4)(@nestjs/websockets@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1)
       '@nestjs/platform-express': 10.2.4(@nestjs/common@10.2.4)(@nestjs/core@10.2.4)
       tslib: 2.6.2
     dev: true
@@ -5430,10 +5434,6 @@ packages:
       strip-bom: 3.0.0
     dev: true
 
-  /tslib@1.14.1:
-    resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
-    dev: true
-
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
 
@@ -5443,7 +5443,7 @@ packages:
     peerDependencies:
       typescript: '>=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta'
     dependencies:
-      tslib: 1.14.1
+      tslib: registry.npmmirror.com/tslib@1.14.1
       typescript: 5.2.2
     dev: true
 
@@ -5846,7 +5846,7 @@ packages:
       rxjs: ^7.0.0
     dependencies:
       '@nestjs/common': 10.2.4(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
-      '@nestjs/core': 10.2.4(@nestjs/common@10.2.4)(@nestjs/platform-express@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@nestjs/core': 10.2.4(@nestjs/common@10.2.4)(@nestjs/platform-express@10.2.4)(@nestjs/websockets@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1)
       cache-manager: registry.npmmirror.com/cache-manager@5.2.3
       reflect-metadata: 0.1.13
       rxjs: 7.8.1
@@ -5865,12 +5865,35 @@ packages:
       typeorm: ^0.3.0
     dependencies:
       '@nestjs/common': 10.2.4(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
-      '@nestjs/core': 10.2.4(@nestjs/common@10.2.4)(@nestjs/platform-express@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@nestjs/core': 10.2.4(@nestjs/common@10.2.4)(@nestjs/platform-express@10.2.4)(@nestjs/websockets@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1)
       reflect-metadata: 0.1.13
       rxjs: 7.8.1
       typeorm: 0.3.17(ioredis@5.3.2)(mysql2@3.6.1)(ts-node@10.9.1)
       uuid: registry.npmmirror.com/uuid@9.0.0
     dev: false
+
+  registry.npmmirror.com/@nestjs/websockets@10.2.4(@nestjs/common@10.2.4)(@nestjs/core@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1):
+    resolution: {integrity: sha512-UGvm9CL5dyE6ZF7y2J0xiK8Atk2+F99hn8ux2OWZyg9pL5pQMg+reVkh2rn7j7ZGEVvqzT1vQ4woT5eT0FOzIQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@nestjs/websockets/-/websockets-10.2.4.tgz}
+    id: registry.npmmirror.com/@nestjs/websockets/10.2.4
+    name: '@nestjs/websockets'
+    version: 10.2.4
+    peerDependencies:
+      '@nestjs/common': ^10.0.0
+      '@nestjs/core': ^10.0.0
+      '@nestjs/platform-socket.io': ^10.0.0
+      reflect-metadata: ^0.1.12
+      rxjs: ^7.1.0
+    peerDependenciesMeta:
+      '@nestjs/platform-socket.io':
+        optional: true
+    dependencies:
+      '@nestjs/common': 10.2.4(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@nestjs/core': 10.2.4(@nestjs/common@10.2.4)(@nestjs/platform-express@10.2.4)(@nestjs/websockets@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      iterare: registry.npmmirror.com/iterare@1.2.1
+      object-hash: registry.npmmirror.com/object-hash@3.0.0
+      reflect-metadata: 0.1.13
+      rxjs: 7.8.1
+      tslib: registry.npmmirror.com/tslib@2.6.2
 
   registry.npmmirror.com/@types/validator@13.11.1:
     resolution: {integrity: sha512-d/MUkJYdOeKycmm75Arql4M5+UuXmf4cHdHKsyw1GcvnNgL6s77UkgSgJ8TE/rI5PYsnwYq5jkcWBLuN/MpQ1A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/validator/-/validator-13.11.1.tgz}
@@ -5976,6 +5999,12 @@ packages:
       - supports-color
     dev: false
 
+  registry.npmmirror.com/iterare@1.2.1:
+    resolution: {integrity: sha512-RKYVTCjAnRthyJes037NX/IiqeidgN1xc3j1RjFfECFp28A1GVwK9nA+i0rJPaHqSZwygLzRnFlzUuHFoWWy+Q==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/iterare/-/iterare-1.2.1.tgz}
+    name: iterare
+    version: 1.2.1
+    engines: {node: '>=6'}
+
   registry.npmmirror.com/libphonenumber-js@1.10.44:
     resolution: {integrity: sha512-svlRdNBI5WgBjRC20GrCfbFiclbF0Cx+sCcQob/C1r57nsoq0xg8r65QbTyVyweQIlB33P+Uahyho6EMYgcOyQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/libphonenumber-js/-/libphonenumber-js-1.10.44.tgz}
     name: libphonenumber-js
@@ -6041,6 +6070,12 @@ packages:
     name: ms
     version: 2.1.3
 
+  registry.npmmirror.com/object-hash@3.0.0:
+    resolution: {integrity: sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/object-hash/-/object-hash-3.0.0.tgz}
+    name: object-hash
+    version: 3.0.0
+    engines: {node: '>= 6'}
+
   registry.npmmirror.com/redis-errors@1.2.0:
     resolution: {integrity: sha512-1qny3OExCf0UvUV/5wpYKf2YwPcOqXzkwKKSmKHiE6ZMQs5heeE/c8eXK+PNllPvmjgAbfnsbpkGZWy8cBpn9w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/redis-errors/-/redis-errors-1.2.0.tgz}
     name: redis-errors
@@ -6062,6 +6097,17 @@ packages:
     name: standard-as-callback
     version: 2.1.0
     dev: false
+
+  registry.npmmirror.com/tslib@1.14.1:
+    resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/tslib/-/tslib-1.14.1.tgz}
+    name: tslib
+    version: 1.14.1
+    dev: true
+
+  registry.npmmirror.com/tslib@2.6.2:
+    resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/tslib/-/tslib-2.6.2.tgz}
+    name: tslib
+    version: 2.6.2
 
   registry.npmmirror.com/uuid@9.0.0:
     resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/uuid/-/uuid-9.0.0.tgz}
