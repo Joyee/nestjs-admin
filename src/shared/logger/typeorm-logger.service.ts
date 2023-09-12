@@ -4,7 +4,7 @@ import {
   DEFAULT_SQL_ERROR_LOG_NAME,
   DEFAULT_SQL_SLOW_LOG_NAME,
 } from './logger.constants';
-import { LoggerModuleOptions } from './logger.instance';
+import { LoggerModuleOptions } from './logger.interface';
 import { LoggerService } from './logger.service';
 
 /**

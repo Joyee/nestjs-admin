@@ -1,15 +1,19 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ConfigurationKeyPaths } from '@/config/configuration';
 
 import { RedisModule } from './redis/redis.module';
-import { RedisService } from './redis/redis.service';
+import { RedisService } from './services/redis.service';
 import { LoggerModule } from './logger/logger.module';
 import { JwtModule } from '@nestjs/jwt';
+import { UtilService } from './services/util.service';
 /**
  * 全局共享模块
  */
+
+const providers = [UtilService, RedisService];
+@Global()
 @Module({
   imports: [
     CacheModule.register(),
@@ -32,6 +36,7 @@ import { JwtModule } from '@nestjs/jwt';
     }),
     LoggerModule,
   ],
-  providers: [RedisService],
+  providers,
+  exports: providers,
 })
 export class SharedModule {}

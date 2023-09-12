@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { BusinessExceptionFilter } from './common/filters/business.exception.filter';
 import { generateDocument } from './doc';
+import { Logger } from '@nestjs/common'
 
 declare const module: any;
 
@@ -19,6 +20,7 @@ async function bootstrap() {
 
   await app.listen(3000, '0.0.0.0');
   const serviceUrl = await app.getUrl();
-  console.log(`api服务已启动，访问: ${serviceUrl}`);
+  Logger.log(`api服务已启动，请访问: ${serviceUrl}`);
+  Logger.log(`API文档已生成，请访问: ${serviceUrl}/doc`)
 }
 bootstrap();

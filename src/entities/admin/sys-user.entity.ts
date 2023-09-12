@@ -3,7 +3,7 @@ import { BaseEntity } from '../base.entity'; // 假设 BaseEntity 存在于相�
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity({ name: 'sys_user' })
-export class SysUser extends BaseEntity {
+export default class SysUser extends BaseEntity {
   @PrimaryGeneratedColumn({ unsigned: true })
   @ApiProperty({ description: 'ID' })
   id: number;

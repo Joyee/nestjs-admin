@@ -7,8 +7,7 @@ import {
 } from '@nestjs/common';
 import { clc, yellow } from '@nestjs/common/utils/cli-colors.util';
 import { createLogger, Logger as WinstonLogger, format } from 'winston';
-import WinstonDailyRotateFile from 'winston-daily-rotate-file';
-import { isDev } from 'src/config/env';
+import * as WinstonDailyRotateFile from 'winston-daily-rotate-file';
 import { isPlainObject } from 'lodash';
 import { getAppRootPath } from './utils/app-root-path.util';
 import { LoggerModuleOptions, WinstonLogLevel } from './logger.interface';
@@ -20,6 +19,7 @@ import {
   PROJECT_LOG_DIR_NAME,
 } from './logger.constants';
 
+export const isDev = () => process.env.NODE_ENV === 'development';
 /**
  * 默认输出的日志等级
  */

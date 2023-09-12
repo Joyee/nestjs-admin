@@ -1,27 +1,48 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { LoggerModuleAsyncOptions } from './logger.instance';
-import { LoggerService } from './logger.service';
 import { LOGGER_MODULE_OPTIONS } from './logger.constants';
+import {
+  LoggerModuleAsyncOptions,
+  LoggerModuleOptions,
+} from './logger.interface';
+import { LoggerService } from './logger.service';
 
 @Module({})
 export class LoggerModule {
-  static forAsyncRoot(
+  static forRoot(
+    options: LoggerModuleOptions,
+    isGlobal = false,
+  ): DynamicModule {
+    return {
+      global: isGlobal,
+      module: LoggerModule,
+      providers: [
+        LoggerService,
+        {
+          provide: LOGGER_MODULE_OPTIONS,
+          useValue: options,
+        },
+      ],
+      exports: [LoggerService, LOGGER_MODULE_OPTIONS],
+    };
+  }
+
+  static forRootAsync(
     options: LoggerModuleAsyncOptions,
     isGlobal = false,
   ): DynamicModule {
     return {
       global: isGlobal,
+      module: LoggerModule,
       imports: options.imports,
-      exports: [LoggerService, LOGGER_MODULE_OPTIONS],
       providers: [
         LoggerService,
         {
           provide: LOGGER_MODULE_OPTIONS,
-          useFactory: options.useFacotry,
+          useFactory: options.useFactory,
           inject: options.inject,
         },
       ],
-      module: LoggerModule,
+      exports: [LoggerService, LOGGER_MODULE_OPTIONS],
     };
   }
 }
