@@ -12,18 +12,41 @@ import { SysLogController } from './log/log.controller';
 import SysLoginLog from '@/entities/admin/sys-login-log.entity';
 import { ROOT_ROLE_ID } from '@/modules/admin/admin.constants';
 import { rootRoleIdProvider } from '@/modules/admin/core/provider/root-role-id.provider';
+import SysRole from '@/entities/admin/sys-role.entity';
+import SysMenu from '@/entities/admin/sys-menu.entity';
+import SysRoleMenu from '@/entities/admin/sys-role-menu.entity';
+import SysDepartment from '@/entities/admin/sys-department.entity';
+import SysRoleDepartment from '@/entities/admin/sys-role-department.entity';
+import { SysRoleController } from '@/modules/admin/system/role/role.controller';
+import { SysRoleService } from '@/modules/admin/system/role/role.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([SysUser, SysConfig, SysUserRole, SysLoginLog]),
+    TypeOrmModule.forFeature([
+      SysUser,
+      SysDepartment,
+      SysUserRole,
+      SysMenu,
+      SysRoleMenu,
+      SysRole,
+      SysRoleDepartment,
+      SysLoginLog,
+      SysConfig,
+    ]),
   ],
-  controllers: [SysUserController, SysParamConfigController, SysLogController],
+  controllers: [
+    SysUserController,
+    SysRoleController,
+    SysParamConfigController,
+    SysLogController,
+  ],
   providers: [
     rootRoleIdProvider(),
     SysUserService,
-    SysParamConfigService,
+    SysRoleService,
     SysLogService,
+    SysParamConfigService,
   ],
-  exports: [ROOT_ROLE_ID, SysUserService, SysLogService],
+  exports: [ROOT_ROLE_ID, TypeOrmModule, SysUserService, SysLogService],
 })
 export class SystemModule {}

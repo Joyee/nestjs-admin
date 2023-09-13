@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import * as svgCaptcha from 'svg-captcha';
 import { isEmpty } from 'lodash';
 import { JwtService } from '@nestjs/jwt';
-import { ImageCaptcha, ImageCaptchaDto } from './login.dto';
+import { ImageCaptcha } from './login.class';
+import { ImageCaptchaDto } from './login.dto';
 import { UtilService } from '@/shared/services/util.service';
 import { RedisService } from '@/shared/services/redis.service';
 import { BusinessException } from '@/common/exception/business.exception';
@@ -108,5 +109,17 @@ export class LoginService {
       .set(`admin:token:${foundUser.id}`, jwtSign, 'EX', 60 * 60 * 24);
     await this.logService.saveLoginLog(foundUser.id, ip, ua);
     return jwtSign;
+  }
+
+  async getRedisPasswordVersionById(id: number): Promise<string> {
+    return this.redisService.getRedis().get(`admin:passwordVersion:${id}`);
+  }
+
+  async getRedisTokenById(id: number): Promise<string> {
+    return this.redisService.getRedis().get(`admin:token:${id}`);
+  }
+
+  async getRedisPermsById(id: number): Promise<string> {
+    return this.redisService.getRedis().get(`admin:perms:${id}`);
   }
 }

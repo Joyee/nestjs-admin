@@ -8,9 +8,11 @@ import {
 import { FastifyReply } from 'fastify';
 import { ResponseDto } from 'src/helper';
 import { BusinessException } from '../exception/business.exception';
+import { LoggerService } from '@/shared/logger/logger.service';
 
 @Catch()
 export class BusinessExceptionFilter<T> implements ExceptionFilter {
+  constructor(private logger: LoggerService) {}
   catch(exception: T, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<FastifyReply>();
@@ -30,7 +32,7 @@ export class BusinessExceptionFilter<T> implements ExceptionFilter {
       exception instanceof HttpException ? exception.message : `${exception}`;
 
     if (status >= 500) {
-      console.error(exception, BusinessExceptionFilter.name);
+      this.logger.error(exception, BusinessExceptionFilter.name);
     }
     response.status(status).send(new ResponseDto(code, null, message));
   }

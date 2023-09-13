@@ -8,20 +8,16 @@ import {
   Req,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { FastifyRequest } from 'fastify';
 import { LoginService } from './login.service';
 import { Authorize } from '../core/decorators/authorize.decorator';
 import { LogDisabled } from '../core/decorators/log-disabled.decorator';
-import {
-  ImageCaptcha,
-  ImageCaptchaDto,
-  LoginInfoDto,
-  LoginToken,
-} from './login.dto';
-import { FastifyRequest } from 'fastify';
+import { ImageCaptchaDto, LoginInfoDto } from './login.dto';
+import { ImageCaptcha, LoginToken } from './login.class';
 import { UtilService } from '@/shared/services/util.service';
 
 @ApiTags('登录模块')
-@Controller('login')
+@Controller('')
 export class LoginController {
   constructor(
     private readonly loginService: LoginService,

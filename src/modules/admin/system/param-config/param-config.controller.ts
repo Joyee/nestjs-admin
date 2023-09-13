@@ -1,11 +1,23 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
 import { SysParamConfigService } from './param-config.service';
 import SysConfig from '@/entities/admin/sys-config.entity';
 import { PageOptionsDto } from '@/common/dto/page.dto';
 import { PaginatedResponseDto } from '@/helper';
-import { CreateParamConfigDto, DeleteParamConfigDto, InfoParamConfigDto, UpdateParamConfigDto } from './param-config.dto';
+import {
+  CreateParamConfigDto,
+  DeleteParamConfigDto,
+  InfoParamConfigDto,
+  UpdateParamConfigDto,
+} from './param-config.dto';
+import { ADMIN_PREFIX } from '@/modules/admin/admin.constants';
 
+@ApiSecurity(ADMIN_PREFIX)
 @ApiTags('参数配置模块')
 @Controller('param-config')
 export class SysParamConfigController {

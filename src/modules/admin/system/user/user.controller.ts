@@ -1,8 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { SysUserService } from './user.service';
 import { CreateUserDto } from './user.dto';
+import { ADMIN_PREFIX } from '@/modules/admin/admin.constants';
 
+@ApiSecurity(ADMIN_PREFIX)
 @ApiTags('管理员模块')
 @Controller('user')
 export class SysUserController {

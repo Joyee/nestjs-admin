@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { nanoid, customAlphabet } from 'nanoid';
-import AES from 'crypto-js/aes';
-import MD5 from 'crypto-js/md5';
+import * as AES from 'crypto-js/aes';
+import * as MD5 from 'crypto-js/md5';
 import { FastifyRequest } from 'fastify';
 import { HttpService } from '@nestjs/axios';
 

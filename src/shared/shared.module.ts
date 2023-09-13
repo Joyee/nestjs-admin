@@ -35,7 +35,6 @@ const providers = [UtilService, RedisService];
       }),
       inject: [ConfigService],
     }),
-    LoggerModule,
   ],
   providers,
   exports: [HttpModule, CacheModule, JwtModule, ...providers],

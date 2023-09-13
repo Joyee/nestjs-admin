@@ -13,9 +13,11 @@ import {
   IsOptional,
   IsEmail,
   IsIn,
+  IsArray,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { isEmpty } from 'lodash';
+import { PageOptionsDto } from '@/common/dto/page.dto';
 
 export class CreateUserDto {
   @ApiProperty({
@@ -106,4 +108,37 @@ export class InfoUserDto {
   @Min(0)
   @Type(() => Number)
   userId: number;
+}
+
+export class PageSearchUserDto extends PageOptionsDto {
+  @ApiProperty({ required: false, description: '部门列表', type: [Number] })
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsOptional()
+  departmentIds: number[];
+
+  @ApiProperty({ required: false, description: '用户姓名' })
+  @IsString()
+  @IsOptional()
+  name = '';
+
+  @ApiProperty({ required: false, description: '用户名' })
+  @IsString()
+  @IsOptional()
+  username = '';
+
+  @ApiProperty({ required: false, description: '邮箱' })
+  @IsString()
+  @IsOptional()
+  email = '';
+
+  @ApiProperty({ required: false, description: '手机号' })
+  @IsString()
+  @IsOptional()
+  phone = '';
+
+  @ApiProperty({ required: false, description: '用户备注' })
+  @IsString()
+  @IsOptional()
+  remark = '';
 }

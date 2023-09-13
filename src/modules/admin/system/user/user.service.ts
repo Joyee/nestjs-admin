@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, In, Repository } from 'typeorm';
-import { isEmpty } from 'lodash';
-import { CreateUserDto, UpdateUserDto } from './user.dto';
+import { EntityManager, In, Not, Repository } from 'typeorm';
+import { camelCase, isEmpty } from 'lodash';
+import { CreateUserDto, PageSearchUserDto, UpdateUserDto } from './user.dto';
 import { BusinessException } from '@/common/exception/business.exception';
 import { UtilService } from '@/shared/services/util.service';
 import { SysParamConfigService } from '../param-config/param-config.service';
@@ -10,16 +10,21 @@ import { SYS_USER_INITPASSWORD } from '@/common/constants/param-config.constants
 import SysUser from '@/entities/admin/sys-user.entity';
 import SysUserRole from '@/entities/admin/sys-user-role.entity';
 import { ROOT_ROLE_ID } from '@/modules/admin/admin.constants';
+import SysDepartment from '@/entities/admin/sys-department.entity';
+import { PageSearchUserInfo } from './user.class';
 
 @Injectable()
 export class SysUserService {
   constructor(
     @InjectRepository(SysUser) private userRepository: Repository<SysUser>,
-    @InjectEntityManager() private entityManager: EntityManager,
-    private utilService: UtilService,
-    private paramConfigService: SysParamConfigService,
+    @InjectRepository(SysUserRole)
     private userRoleRepository: Repository<SysUserRole>,
+    private paramConfigService: SysParamConfigService,
+    @InjectRepository(SysDepartment)
+    private departmentRepository: Repository<SysDepartment>,
+    @InjectEntityManager() private entityManager: EntityManager,
     @Inject(ROOT_ROLE_ID) private rootRoleId: number,
+    private utilService: UtilService,
   ) {}
 
   /**
@@ -124,5 +129,119 @@ export class SysUserService {
     return await this.userRepository.findOne({
       where: { username: username, status: 1 },
     });
+  }
+
+  /**
+   * 查找用户信息
+   * @param userId 用户id
+   */
+  async info(
+    userId: number,
+  ): Promise<SysUser & { roles: number[]; departmentName: string }> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (isEmpty(user)) {
+      throw new BusinessException(10017);
+    }
+    const departmentRow = await this.departmentRepository.findOne({
+      where: { id: user.departmentId },
+    });
+    if (isEmpty(departmentRow)) {
+      throw new BusinessException(10018);
+    }
+    const roleRows = await this.userRoleRepository.find({
+      where: { userId: user.id },
+    });
+    const roles = roleRows.map((role) => role.roleId);
+    delete user.password;
+    return { ...user, roles, departmentName: departmentRow.name };
+  }
+
+  async infoList(ids: number[]): Promise<SysUser[]> {
+    return await this.userRepository.findBy({ id: In(ids) });
+  }
+
+  /**
+   * 根据部门id列表获取用户数量，去除超级管理员
+   * @param uid
+   * @param deptIds
+   */
+  async count(uid: number, deptIds: number[]): Promise<number> {
+    const queryAll = isEmpty(deptIds);
+    const rootUserId = await this.findRootUserId();
+    if (queryAll) {
+      return await this.userRepository.count({
+        where: { id: Not(In([rootUserId, uid])) },
+      });
+    }
+    return await this.userRepository.count({
+      where: { id: Not(In([rootUserId, uid])), departmentId: In(deptIds) },
+    });
+  }
+
+  /**
+   * 根据部门id进行分页查询用户列表，deptId = -1时查询全部
+   * @param uid
+   * @param params
+   */
+  async listWithPagination(
+    uid: number,
+    params: PageSearchUserDto,
+  ): Promise<[PageSearchUserInfo[], number]> {
+    const { departmentIds, name, username, remark, phone, limit, page } =
+      params;
+    const queryAll = isEmpty(departmentIds);
+    const rootUserId = await this.findRootUserId();
+    const queryBuilder = this.userRepository.createQueryBuilder('user');
+    queryBuilder
+      .innerJoinAndSelect('sys_department', 'dept', 'dept.id = user.department')
+      .innerJoinAndSelect(
+        'sys_user_role',
+        'user_role',
+        'user_role.user_id = user.id',
+      )
+      .innerJoinAndSelect('sys_role', 'role', 'role.id = user_role.role_id')
+      .select([
+        'user.id,GROUP_CONCAT(role.name) as roleNames',
+        'dept.name',
+        'user.*',
+      ])
+      .where('user.id NOT IN (:...ids)', { ids: [rootUserId, uid] })
+      .andWhere(queryAll ? '1 = 1' : 'user.departmentId IN (:...deptIds)', {
+        deptIds: departmentIds,
+      })
+      .andWhere('user.name LIKE :name', { name: `%${name}%` })
+      .andWhere('user.username LIKE :username', { username: `%${username}%` })
+      .andWhere('user.remark LIKE :remark', { remark: `%${remark}%` })
+      .andWhere('user.phone LIKE :phone', { phone: `%${phone}%` })
+      .orderBy('user.updated_at', 'ASC')
+      .groupBy('user.id')
+      .offset((page - 1) * limit)
+      .limit(limit);
+    const [_, total] = await queryBuilder.getManyAndCount();
+    const list = await queryBuilder.getRawMany();
+    const result: PageSearchUserInfo[] = list.map((n) => {
+      const convertData = Object.entries<[string, any]>(n).map(
+        ([key, value]) => [camelCase(key), value],
+      );
+
+      return {
+        ...Object.fromEntries(convertData),
+        departmentName: n.dept_name,
+        roleName: n.roleNames.split(','),
+      };
+    });
+    return [result, total];
+  }
+
+  async forbidden() {
+    // TODO
+  }
+
+  async multiForbidden() {
+    // TODO
+  }
+
+  async upgradePassword() {
+    // TODO
   }
 }
