@@ -6,10 +6,12 @@ import SysConfig from '@/entities/admin/sys-config.entity';
 import { LoginModule } from './login/login.module';
 import { SystemModule } from './system/system.module';
 import { AuthGuard } from './core/guards/auth.guard';
+import SysUserRole from '@/entities/admin/sys-user-role.entity';
+import SysLoginLog from '@/entities/admin/sys-login-log.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([SysUser, SysConfig]),
+    TypeOrmModule.forFeature([SysUser, SysConfig, SysUserRole, SysLoginLog]),
     LoginModule,
     SystemModule,
   ],

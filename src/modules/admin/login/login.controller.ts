@@ -18,11 +18,15 @@ import {
   LoginToken,
 } from './login.dto';
 import { FastifyRequest } from 'fastify';
+import { UtilService } from '@/shared/services/util.service';
 
 @ApiTags('登录模块')
 @Controller('login')
 export class LoginController {
-  constructor(private readonly loginService: LoginService) {}
+  constructor(
+    private readonly loginService: LoginService,
+    private readonly utilService: UtilService,
+  ) {}
 
   @ApiOperation({ summary: '获取登录图片验证码' })
   @ApiOkResponse({ type: ImageCaptcha })
@@ -46,6 +50,8 @@ export class LoginController {
     const token = await this.loginService.getLoginSign({
       username: dto.username,
       password: dto.password,
+      ip: this.utilService.getReqIP(req),
+      ua,
     });
     return { token };
   }

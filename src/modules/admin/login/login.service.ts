@@ -1,16 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import * as svgCaptcha from 'svg-captcha';
 import { isEmpty } from 'lodash';
+import { JwtService } from '@nestjs/jwt';
 import { ImageCaptcha, ImageCaptchaDto } from './login.dto';
 import { UtilService } from '@/shared/services/util.service';
 import { RedisService } from '@/shared/services/redis.service';
 import { BusinessException } from '@/common/exception/business.exception';
+import { SysUserService } from '@/modules/admin/system/user/user.service';
+import { SysLogService } from '@/modules/admin/system/log/log.service';
 
 @Injectable()
 export class LoginService {
   constructor(
     private readonly utilService: UtilService,
     private readonly redisService: RedisService,
+    private readonly userService: SysUserService,
+    private readonly jwtService: JwtService,
+    private readonly logService: SysLogService,
   ) {}
 
   /**
@@ -63,15 +69,44 @@ export class LoginService {
 
   /**
    * 获取登录 JWT
+   * 返回 null 说明登录账号密码错误，不存在该用户
    */
   async getLoginSign({
     username,
     password,
+    ip,
+    ua,
   }: {
     username: string;
     password: string;
+    ip: string;
+    ua: string;
   }): Promise<string> {
-    const jwtSign = '';
+    const foundUser = await this.userService.findUserByUserName(username);
+    if (isEmpty(foundUser)) {
+      throw new BusinessException(10003);
+    }
+    const comparePassword = this.utilService.md5(
+      `${password}${foundUser.psalt}`,
+    );
+    if (foundUser.password !== comparePassword) {
+      throw new BusinessException(10003);
+    }
+    // TODO 系统管理员开放多点登录
+
+    const jwtSign = this.jwtService.sign({
+      uid: parseInt(foundUser.id.toString()),
+      pv: 1,
+    });
+
+    await this.redisService
+      .getRedis()
+      .set(`admin:passwordVersion:${foundUser.id}`, 1);
+    // Token设置过期时间为 24h
+    await this.redisService
+      .getRedis()
+      .set(`admin:token:${foundUser.id}`, jwtSign, 'EX', 60 * 60 * 24);
+    await this.logService.saveLoginLog(foundUser.id, ip, ua);
     return jwtSign;
   }
 }
