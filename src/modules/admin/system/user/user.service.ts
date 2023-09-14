@@ -12,6 +12,7 @@ import SysUserRole from '@/entities/admin/sys-user-role.entity';
 import { ROOT_ROLE_ID } from '@/modules/admin/admin.constants';
 import SysDepartment from '@/entities/admin/sys-department.entity';
 import { AccountInfo, PageSearchUserInfo } from './user.class';
+import { RedisService } from '@/shared/services/redis.service';
 
 @Injectable()
 export class SysUserService {
@@ -25,6 +26,7 @@ export class SysUserService {
     @InjectEntityManager() private entityManager: EntityManager,
     @Inject(ROOT_ROLE_ID) private rootRoleId: number,
     private utilService: UtilService,
+    private redisService: RedisService,
   ) {}
 
   /**
@@ -212,11 +214,16 @@ export class SysUserService {
   ): Promise<[PageSearchUserInfo[], number]> {
     const { departmentIds, name, username, remark, phone, limit, page } =
       params;
-    const queryAll = isEmpty(departmentIds);
+
     const rootUserId = await this.findRootUserId();
-    const queryBuilder = this.userRepository.createQueryBuilder('user');
-    queryBuilder
-      .innerJoinAndSelect('sys_department', 'dept', 'dept.id = user.department')
+    const queryAll = isEmpty(departmentIds);
+    const queryBuilder = this.userRepository
+      .createQueryBuilder('user')
+      .innerJoinAndSelect(
+        'sys_department',
+        'dept',
+        'dept.id = user.departmentId',
+      )
       .innerJoinAndSelect(
         'sys_user_role',
         'user_role',
@@ -236,10 +243,11 @@ export class SysUserService {
       .andWhere('user.username LIKE :username', { username: `%${username}%` })
       .andWhere('user.remark LIKE :remark', { remark: `%${remark}%` })
       .andWhere('user.phone LIKE :phone', { phone: `%${phone}%` })
-      .orderBy('user.updated_at', 'ASC')
+      .orderBy('user.updated_at', 'DESC')
       .groupBy('user.id')
       .offset((page - 1) * limit)
       .limit(limit);
+
     const [_, total] = await queryBuilder.getManyAndCount();
     const list = await queryBuilder.getRawMany();
     const result: PageSearchUserInfo[] = list.map((n) => {
@@ -256,8 +264,13 @@ export class SysUserService {
     return [result, total];
   }
 
-  async forbidden() {
-    // TODO
+  /**
+   * 禁用用户
+   */
+  async forbidden(uid: number): Promise<void> {
+    await this.redisService.getRedis().del(`admin:passwordVersion:${uid}`);
+    await this.redisService.getRedis().del(`admin:token:${uid}`);
+    await this.redisService.getRedis().del(`admin:perms:${uid}`);
   }
 
   async multiForbidden() {

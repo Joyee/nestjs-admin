@@ -1,6 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, In, Like, Not, Repository } from 'typeorm';
+import {
+  EntityManager,
+  FindManyOptions,
+  In,
+  Like,
+  Not,
+  Repository,
+} from 'typeorm';
 import { difference, filter, includes, isEmpty, map } from 'lodash';
 
 import {
@@ -173,17 +180,30 @@ export class SysRoleService {
     params: PageSearchRoleDto,
   ): Promise<[SysRole[], number]> {
     const { limit, page, name, label, remark } = params;
-    return await this.roleRepository.findAndCount({
+    const conditions: FindManyOptions<SysRole> = {
       where: {
         id: Not(this.rootRoleId),
-        name: Like(`%${name}%`),
-        label: Like(`%${label}%`),
-        remark: Like(`%${remark}%`),
       },
-      order: { id: 'ASC' },
+      order: {
+        id: 'ASC',
+      },
       take: limit,
       skip: (page - 1) * limit,
-    });
+    };
+    // 动态添加条件
+    if (name) {
+      conditions.where['name'] = Like(`%${name}%`);
+    }
+
+    if (label) {
+      conditions.where['label'] = Like(`%${label}%`);
+    }
+
+    if (remark) {
+      conditions.where['remark'] = Like(`%${remark}%`);
+    }
+    const result = await this.roleRepository.findAndCount(conditions);
+    return result;
   }
 
   /**

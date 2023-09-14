@@ -22,7 +22,7 @@ async function bootstrap() {
 
   generateDocument(app);
 
-  await app.listen(3000, '0.0.0.0');
+  await app.listen(4000, '0.0.0.0');
   const serviceUrl = await app.getUrl();
   Logger.log(`api服务已启动，请访问: ${serviceUrl}`);
   Logger.log(`API文档已生成，请访问: ${serviceUrl}/doc`);

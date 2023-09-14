@@ -75,13 +75,14 @@ export class AuthGuard implements CanActivate {
     const perms: string = await this.loginService.getRedisPermsById(
       request[ADMIN_USER].uid,
     );
+
     if (isEmpty(perms)) {
       throw new BusinessException(11001);
     }
 
     // 将 sys:admin:user 等转换为 sys/admin/user
     const permArray: string[] = (JSON.parse(perms) as string[]).map((e) =>
-      e.replace(/:g/, '/'),
+      e.replace(/:/g, '/'),
     );
     // 遍历权限是否包含该url，不包含就没有权限访问
     if (!permArray.includes(path.replace(`/${ADMIN_PREFIX}/`, ''))) {

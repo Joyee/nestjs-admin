@@ -117,28 +117,24 @@ export class PageSearchUserDto extends PageOptionsDto {
   @IsOptional()
   departmentIds: number[];
 
-  @ApiProperty({ required: false, description: '用户姓名' })
+  @ApiProperty({ required: false, description: '用户姓名', default: '' })
   @IsString()
-  @IsOptional()
   name = '';
 
-  @ApiProperty({ required: false, description: '用户名' })
+  @ApiProperty({ required: false, description: '用户名', default: '' })
   @IsString()
-  @IsOptional()
   username = '';
 
-  @ApiProperty({ required: false, description: '邮箱' })
+  @ApiProperty({ required: false, description: '邮箱', default: '' })
   @IsString()
-  @IsOptional()
   email = '';
 
-  @ApiProperty({ required: false, description: '手机号' })
+  @ApiProperty({ required: false, description: '手机号', default: '' })
   @IsString()
   @IsOptional()
   phone = '';
 
-  @ApiProperty({ required: false, description: '用户备注' })
+  @ApiProperty({ required: false, description: '用户备注', default: '' })
   @IsString()
-  @IsOptional()
   remark = '';
 }

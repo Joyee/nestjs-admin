@@ -1,4 +1,4 @@
-import { Controller, Get, Req } from '@nestjs/common';
+import { Controller, Get, Post, Req } from '@nestjs/common';
 import { SysUserService } from '@/modules/admin/system/user/user.service';
 import {
   ApiOkResponse,
@@ -38,5 +38,12 @@ export class AccountController {
   @Get('permmenu')
   async permmenu(@AdminUser() user: IAdminUser): Promise<PermMenuInfo> {
     return await this.loginService.getPermMenu(user.uid);
+  }
+
+  @ApiOperation({ summary: '管理员登出' })
+  @PermissionOptional()
+  @Post('logout')
+  async logout(@AdminUser() user: IAdminUser): Promise<void> {
+    await this.loginService.clearLoginStatus(user.uid);
   }
 }

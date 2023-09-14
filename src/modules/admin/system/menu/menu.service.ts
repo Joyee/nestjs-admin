@@ -65,7 +65,7 @@ export class SysMenuService {
         .andWhere('menu.perms IS NOT NULL')
         .getMany();
     }
-    if (isEmpty(result)) {
+    if (!isEmpty(result)) {
       result.forEach((e) => {
         perms = concat(perms, e.perms.split(','));
       });

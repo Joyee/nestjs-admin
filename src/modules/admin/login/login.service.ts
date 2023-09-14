@@ -85,7 +85,9 @@ export class LoginService {
     ip: string;
     ua: string;
   }): Promise<string> {
+    console.log('登录');
     const foundUser = await this.userService.findUserByUserName(username);
+    console.log(foundUser);
     if (isEmpty(foundUser)) {
       throw new BusinessException(10003);
     }
@@ -95,7 +97,16 @@ export class LoginService {
     if (foundUser.password !== comparePassword) {
       throw new BusinessException(10003);
     }
+    const perms = await this.menuService.getPerms(foundUser.id);
+
     // TODO 系统管理员开放多点登录
+    if (foundUser.id === 1) {
+      const oldToken = await this.getRedisTokenById(foundUser.id);
+      if (oldToken) {
+        this.logService.saveLoginLog(foundUser.id, ip, ua);
+        return oldToken;
+      }
+    }
 
     const jwtSign = this.jwtService.sign({
       uid: parseInt(foundUser.id.toString()),
@@ -109,6 +120,9 @@ export class LoginService {
     await this.redisService
       .getRedis()
       .set(`admin:token:${foundUser.id}`, jwtSign, 'EX', 60 * 60 * 24);
+    await this.redisService
+      .getRedis()
+      .set(`admin:perms:${foundUser.id}`, JSON.stringify(perms));
     await this.logService.saveLoginLog(foundUser.id, ip, ua);
     return jwtSign;
   }
@@ -133,5 +147,9 @@ export class LoginService {
     const menus = await this.menuService.getMenus(uid);
     const perms = await this.menuService.getPerms(uid);
     return { menus, perms };
+  }
+
+  async clearLoginStatus(uid: number): Promise<void> {
+    await this.userService.forbidden(uid);
   }
 }
