@@ -18,7 +18,7 @@ MYSQL_CONFIG:
   port: 3306
   username: 'root'
   password: '12345678'
-  database: 'nest-admin'
+  database: 'nest_admin_sys'
   entities: 'mysql' # 这里的命名一定要跟 MongoDB 里面的配置命名区分开
   synchronize: true
 

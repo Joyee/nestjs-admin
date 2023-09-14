@@ -11,7 +11,7 @@ import SysUser from '@/entities/admin/sys-user.entity';
 import SysUserRole from '@/entities/admin/sys-user-role.entity';
 import { ROOT_ROLE_ID } from '@/modules/admin/admin.constants';
 import SysDepartment from '@/entities/admin/sys-department.entity';
-import { PageSearchUserInfo } from './user.class';
+import { AccountInfo, PageSearchUserInfo } from './user.class';
 
 @Injectable()
 export class SysUserService {
@@ -26,6 +26,29 @@ export class SysUserService {
     @Inject(ROOT_ROLE_ID) private rootRoleId: number,
     private utilService: UtilService,
   ) {}
+
+  /**
+   * 获取用户信息
+   * @param uid
+   * @param ip
+   */
+  async getAccountInfo(uid: number, ip?: string): Promise<AccountInfo> {
+    const foundUser: SysUser = await this.userRepository.findOne({
+      where: { id: uid },
+    });
+    if (isEmpty(foundUser)) {
+      throw new BusinessException(10017);
+    }
+    return {
+      name: foundUser.name,
+      nickName: foundUser.nickName,
+      email: foundUser.email,
+      phone: foundUser.phone,
+      remark: foundUser.remark,
+      headImg: foundUser.headImg,
+      loginIp: ip,
+    };
+  }
 
   /**
    * 新增系统用户, 如果返回false,说明已经存在该用户

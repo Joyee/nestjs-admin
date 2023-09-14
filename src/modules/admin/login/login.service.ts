@@ -2,17 +2,19 @@ import { Injectable } from '@nestjs/common';
 import * as svgCaptcha from 'svg-captcha';
 import { isEmpty } from 'lodash';
 import { JwtService } from '@nestjs/jwt';
-import { ImageCaptcha } from './login.class';
+import { ImageCaptcha, PermMenuInfo } from './login.class';
 import { ImageCaptchaDto } from './login.dto';
 import { UtilService } from '@/shared/services/util.service';
 import { RedisService } from '@/shared/services/redis.service';
 import { BusinessException } from '@/common/exception/business.exception';
 import { SysUserService } from '@/modules/admin/system/user/user.service';
 import { SysLogService } from '@/modules/admin/system/log/log.service';
+import { SysMenuService } from '@/modules/admin/system/menu/menu.service';
 
 @Injectable()
 export class LoginService {
   constructor(
+    private readonly menuService: SysMenuService,
     private readonly utilService: UtilService,
     private readonly redisService: RedisService,
     private readonly userService: SysUserService,
@@ -121,5 +123,15 @@ export class LoginService {
 
   async getRedisPermsById(id: number): Promise<string> {
     return this.redisService.getRedis().get(`admin:perms:${id}`);
+  }
+
+  /**
+   * 获取权限菜单
+   * @param uid
+   */
+  async getPermMenu(uid: number): Promise<PermMenuInfo> {
+    const menus = await this.menuService.getMenus(uid);
+    const perms = await this.menuService.getPerms(uid);
+    return { menus, perms };
   }
 }
