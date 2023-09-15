@@ -38,7 +38,6 @@ export class SysDeptService {
    */
   async getDepts(uid: number): Promise<SysDepartment[]> {
     const roleIds = await this.roleService.getRoleIdByUser(uid);
-    console.log(roleIds);
     let depts: any = [];
     if (includes(roleIds, this.rootRoleId)) {
       depts = await this.deptRepository.find();

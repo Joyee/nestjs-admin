@@ -8,3 +8,5 @@ export const ADMIN_USER = 'adminUser';
 
 export const PERMISSION_OPTIONAL_KEY_METADATA =
   'admin_module:permission_optional';
+
+export const FORBIDDEN_OP_MENU_ID_INDEX = 90;

@@ -86,7 +86,6 @@ export class LoginService {
     ua: string;
   }): Promise<string> {
     const foundUser = await this.userService.findUserByUserName(username);
-    console.log(foundUser);
     if (isEmpty(foundUser)) {
       throw new BusinessException(10003);
     }

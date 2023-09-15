@@ -296,7 +296,6 @@ export class SysUserService {
    * 禁用多个用户
    */
   async multiForbidden(uids: number[]): Promise<void> {
-    console.log('禁用用户', uids);
     if (uids && uids.length > 0) {
       const pms: string[] = [];
       const tokens: string[] = [];
