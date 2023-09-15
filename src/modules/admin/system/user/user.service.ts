@@ -2,7 +2,13 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, In, Not, Repository } from 'typeorm';
 import { camelCase, isEmpty } from 'lodash';
-import { CreateUserDto, PageSearchUserDto, UpdateUserDto } from './user.dto';
+import {
+  CreateUserDto,
+  PageSearchUserDto,
+  UpdatePasswordDto,
+  UpdateUserDto,
+  UpdateUserInfoDto,
+} from './user.dto';
 import { BusinessException } from '@/common/exception/business.exception';
 import { UtilService } from '@/shared/services/util.service';
 import { SysParamConfigService } from '../param-config/param-config.service';
@@ -112,17 +118,16 @@ export class SysUserService {
         remark: params.remark,
         status: params.status,
       });
-      // 先删除原来的角色关系
+      // 删除原来的角色关系
       await manager.delete(SysUserRole, { userId: params.id });
       const insertRoles = params.roles.map((roleId) => ({
         roleId,
         userId: params.id,
       }));
-      // 重新分配角色
+      // 重新配置角色
       await manager.insert(SysUserRole, insertRoles);
-      // 禁用状态
       if (params.status === 0) {
-        // TODO
+        await this.forbidden(params.id);
       }
     });
   }
@@ -238,11 +243,25 @@ export class SysUserService {
       .where('user.id NOT IN (:...ids)', { ids: [rootUserId, uid] })
       .andWhere(queryAll ? '1 = 1' : 'user.departmentId IN (:...deptIds)', {
         deptIds: departmentIds,
-      })
-      .andWhere('user.name LIKE :name', { name: `%${name}%` })
-      .andWhere('user.username LIKE :username', { username: `%${username}%` })
-      .andWhere('user.remark LIKE :remark', { remark: `%${remark}%` })
-      .andWhere('user.phone LIKE :phone', { phone: `%${phone}%` })
+      });
+    if (!isEmpty(name)) {
+      queryBuilder.andWhere('user.name LIKE :name', { name: `%${name}%` });
+    }
+    if (!isEmpty(username)) {
+      queryBuilder.andWhere('user.username LIKE :username', {
+        username: `%${username}%`,
+      });
+    }
+    if (!isEmpty(phone)) {
+      queryBuilder.andWhere('user.phone LIKE :phone', { phone: `%${phone}%` });
+    }
+    if (!isEmpty(remark)) {
+      queryBuilder.andWhere('user.remark LIKE :remark', {
+        remark: `%${remark}%`,
+      });
+    }
+
+    queryBuilder
       .orderBy('user.updated_at', 'DESC')
       .groupBy('user.id')
       .offset((page - 1) * limit)
@@ -258,7 +277,7 @@ export class SysUserService {
       return {
         ...Object.fromEntries(convertData),
         departmentName: n.dept_name,
-        roleName: n.roleNames.split(','),
+        roleNames: n.roleNames.split(','),
       };
     });
     return [result, total];
@@ -273,11 +292,76 @@ export class SysUserService {
     await this.redisService.getRedis().del(`admin:perms:${uid}`);
   }
 
-  async multiForbidden() {
-    // TODO
+  /**
+   * 禁用多个用户
+   */
+  async multiForbidden(uids: number[]): Promise<void> {
+    console.log('禁用用户', uids);
+    if (uids && uids.length > 0) {
+      const pms: string[] = [];
+      const tokens: string[] = [];
+      const pvs: string[] = [];
+      uids.forEach((uid) => {
+        pvs.push(`admin:passwordVersion:${uid}`);
+        tokens.push(`admin:token:${uid}`);
+        pms.push(`admin:perms:${uid}`);
+      });
+      await this.redisService.getRedis().del(pvs);
+      await this.redisService.getRedis().del(tokens);
+      await this.redisService.getRedis().del(pms);
+    }
   }
 
-  async upgradePassword() {
-    // TODO
+  async forceUpdatePassword(uid: number, password: string): Promise<void> {
+    const user = await this.userRepository.findOne({ where: { id: uid } });
+    if (isEmpty(user)) {
+      throw new BusinessException(10017);
+    }
+    const newPassword = this.utilService.md5(`${password}${user.psalt}`);
+    await this.userRepository.update({ id: uid }, { password: newPassword });
+    await this.upgradePassword(uid);
+  }
+
+  /**
+   * 更改管理员密码
+   * @param uid
+   * @param dto
+   */
+  async updatePassword(uid: number, dto: UpdatePasswordDto) {
+    const user = await this.userRepository.findOne({ where: { id: uid } });
+    if (!isEmpty(user)) {
+      throw new BusinessException(10017);
+    }
+    const comparePassword = this.utilService.md5(
+      `${dto.originPassword}${user.psalt}`,
+    );
+    // 和原密码比较
+    if (comparePassword !== user.password) {
+      throw new BusinessException(10011);
+    }
+    const newPassword = this.utilService.md5(`${dto.newPassword}${user.psalt}`);
+    await this.userRepository.update({ id: uid }, { password: newPassword });
+    await this.upgradePassword(uid);
+  }
+
+  /**
+   * 升级用户版本密码
+   */
+  async upgradePassword(id: number) {
+    const version = await this.redisService
+      .getRedis()
+      .get(`admin:passwordVersion:${id}`);
+    if (!isEmpty(version)) {
+      await this.redisService
+        .getRedis()
+        .set(`admin:passwordVersion:${id}`, parseInt(version) * 1);
+    }
+  }
+
+  /**
+   * 更新个人信息
+   */
+  async updatePersonalInfo(uid: number, info: UpdateUserInfoDto) {
+    await this.userRepository.update(uid, info);
   }
 }

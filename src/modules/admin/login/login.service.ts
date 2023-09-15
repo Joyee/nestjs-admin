@@ -85,7 +85,6 @@ export class LoginService {
     ip: string;
     ua: string;
   }): Promise<string> {
-    console.log('登录');
     const foundUser = await this.userService.findUserByUserName(username);
     console.log(foundUser);
     if (isEmpty(foundUser)) {

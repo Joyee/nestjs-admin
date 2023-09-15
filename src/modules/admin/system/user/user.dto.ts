@@ -138,3 +138,77 @@ export class PageSearchUserDto extends PageOptionsDto {
   @IsString()
   remark = '';
 }
+
+export class DeleteUserDto {
+  @ApiProperty({ description: '删除的用户id集合', type: [Number] })
+  @IsArray()
+  @ArrayNotEmpty()
+  userIds: number[];
+}
+
+export class MultipleForbiddenUserIdsDto {
+  @ApiProperty({ description: '禁用的用户id集合', type: [Number] })
+  @IsArray()
+  @ArrayNotEmpty()
+  userIds: number[];
+}
+
+const matches = /^[a-z0-9A-Z`~!#%^&*=+\\|{};:'\\",<>/?]+$/
+export class PasswordUserDto {
+  @ApiProperty({ description: '管理员id' })
+  @IsInt()
+  @Min(0)
+  userId: number;
+
+  @ApiProperty({ description: '更改后的密码' })
+  @Matches(matches)
+  password: string;
+}
+
+export class UpdatePasswordDto {
+  @ApiProperty({
+    description: '更改前的密码',
+  })
+  @IsString()
+  @MinLength(6)
+  @Matches(matches)
+  originPassword: string;
+
+  @ApiProperty({
+    description: '更改后的密码',
+  })
+  @MinLength(6)
+  @Matches(matches)
+  newPassword: string;
+}
+
+export class UpdateUserInfoDto {
+  @ApiProperty({
+    required: false,
+    description: '用户呢称',
+  })
+  @IsString()
+  nickName: string;
+
+  @ApiProperty({
+    required: false,
+    description: '用户邮箱',
+  })
+  @IsEmail()
+  @ValidateIf((o) => !isEmpty(o.email))
+  email: string;
+
+  @ApiProperty({
+    required: false,
+    description: '用户手机号',
+  })
+  @IsString()
+  phone: string;
+
+  @ApiProperty({
+    required: false,
+    description: '用户备注',
+  })
+  @IsString()
+  remark: string;
+}
