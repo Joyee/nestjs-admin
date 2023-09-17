@@ -10,3 +10,6 @@ export const PERMISSION_OPTIONAL_KEY_METADATA =
   'admin_module:permission_optional';
 
 export const FORBIDDEN_OP_MENU_ID_INDEX = 90;
+
+export const SYS_TASK_QUEUE_NAME = 'admin_module:sys-task';
+export const SYS_TASK_QUEUE_PREFIX = 'admin:sys:task';

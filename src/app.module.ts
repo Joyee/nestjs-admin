@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { BullModule } from '@nestjs/bull';
 import {
   ConfigurationKeyPaths,
   getConfiguration,
@@ -77,6 +78,7 @@ import { WsModule } from './modules/ws/ws.module';
     SharedModule,
     AdminModule,
     WsModule,
+    BullModule,
   ],
   controllers: [],
   providers: [],

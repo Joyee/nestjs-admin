@@ -6,6 +6,7 @@ import SysLoginLog from '@/entities/admin/sys-login-log.entity';
 import { UtilService } from '@/shared/services/util.service';
 import { LoginLogInfo } from './log.class';
 import SysUser from '@/entities/admin/sys-user.entity';
+import SysTaskLog from '@/entities/admin/sys-task-log.entity';
 
 @Injectable()
 export class SysLogService {
@@ -15,6 +16,8 @@ export class SysLogService {
     private utilService: UtilService,
     @InjectRepository(SysUser)
     private userRepository: Repository<SysUser>,
+    @InjectRepository(SysTaskLog)
+    private taskLogRepository: Repository<SysTaskLog>,
   ) {}
 
   /**
@@ -68,5 +71,27 @@ export class SysLogService {
     return await this.loginLogRepository.count({
       where: { userId: In(userIds.map((e) => e.id)) },
     });
+  }
+
+  /**
+   * 记录任务日志
+   * @param tid
+   * @param status
+   * @param time
+   * @param err
+   * @returns
+   */
+  async recordTaskLog(
+    tid: number,
+    status: number,
+    time?: string,
+    err?: string,
+  ) {
+    const result = await this.taskLogRepository.save({
+      taskId: tid,
+      status,
+      detail: err,
+    });
+    return result;
   }
 }
