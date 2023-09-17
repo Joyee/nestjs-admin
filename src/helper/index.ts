@@ -1,4 +1,10 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { Type, applyDecorators } from '@nestjs/common';
+import {
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiProperty,
+  getSchemaPath,
+} from '@nestjs/swagger';
 
 export class ResponseDto<T> {
   readonly data: T;
@@ -37,3 +43,37 @@ export class PaginatedResponseDto<T> {
   @ApiProperty()
   pagination: Pagination;
 }
+
+export const ApiResponse = <
+  DataDto extends Type<unknown>,
+  WrapperDataDto extends Type<unknown>,
+>(
+  dataDto: DataDto,
+  wrapperDataDto: WrapperDataDto,
+) =>
+  applyDecorators(
+    ApiExtraModels(wrapperDataDto, dataDto),
+    ApiOkResponse({
+      schema: {
+        allOf: [
+          { $ref: getSchemaPath(wrapperDataDto) },
+          {
+            properties: {
+              list: {
+                type: 'array',
+                items: { $ref: getSchemaPath(dataDto) },
+              },
+            },
+          },
+        ],
+      },
+    }),
+  );
+
+export const ApiOkResponseData = <DataDto extends Type<unknown>>(
+  dataDto: DataDto,
+) => ApiResponse(dataDto, ResponseDto);
+
+export const ApiOkResponsePaginated = <DataDto extends Type<unknown>>(
+  dataDto: DataDto,
+) => ApiResponse(dataDto, PaginatedResponseDto);

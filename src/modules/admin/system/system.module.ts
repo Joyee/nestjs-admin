@@ -26,6 +26,8 @@ import { SysDeptService } from './dept/dept.service';
 import { SysOnlineService } from './online/online.service';
 import { SysOnlineController } from './online/online.controller';
 import { WsModule } from '@/modules/ws/ws.module';
+import { SysServeService } from './serve/serve.service';
+import { SysServeController } from './serve/serve.controller';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -49,6 +51,7 @@ import { WsModule } from '@/modules/ws/ws.module';
     SysLogController,
     SysMenuController,
     SysOnlineController,
+    SysServeController,
   ],
   providers: [
     rootRoleIdProvider(),
@@ -59,6 +62,7 @@ import { WsModule } from '@/modules/ws/ws.module';
     SysMenuService,
     SysDeptService,
     SysOnlineService,
+    SysServeService,
   ],
   exports: [
     ROOT_ROLE_ID,
