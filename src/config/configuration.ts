@@ -1,7 +1,8 @@
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 import { getConfig } from '../utils';
 
-const { MYSQL_CONFIG, REDIS_CONFIG, LOGGER_CONFIG, JWT_CONFIG } = getConfig();
+const { MYSQL_CONFIG, REDIS_CONFIG, LOGGER_CONFIG, JWT_CONFIG, WS_CONFIG } =
+  getConfig();
 
 export const getConfiguration = () =>
   ({
@@ -19,7 +20,7 @@ export const getConfiguration = () =>
       autoLoadEntities: true,
       synchronize: true,
       logging: ['error'],
-      timezone: '+8:00', // 东八区
+      timezone: '+08:00', // 东八区
     } as MysqlConnectionOptions,
     redis: {
       host: REDIS_CONFIG.host, // default value
@@ -36,9 +37,14 @@ export const getConfiguration = () =>
       errorLogName: LOGGER_CONFIG.errorLogName,
       appLogName: LOGGER_CONFIG.appLogName,
     },
+    socket: {
+      port: WS_CONFIG.port,
+      path: WS_CONFIG.path,
+    },
   } as const);
 
 export type ConfigurationType = ReturnType<typeof getConfiguration>;
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export type ConfigurationKeyPaths = Record<NestedKeyOf<ConfigurationType>, any>;

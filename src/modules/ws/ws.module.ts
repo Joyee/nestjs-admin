@@ -1,15 +1,17 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AdminWsGateway } from './admin-ws.gateway';
-import SysUserRole from '@/entities/admin/sys-user-role.entity';
+import { AdminWsGateway } from './admin-ws/admin-ws.gateway';
 import { AuthService } from './auth.service';
-import { AdminWsService } from './admin-ws.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AdminWsService } from './admin-ws/admin-ws.service';
+import SysUserRole from '@/entities/admin/sys-user-role.entity';
+import SysRoleMenu from '@/entities/admin/sys-role-menu.entity';
 
-const providers = [AdminWsGateway, AuthService, AdminWsService];
-
+/**
+ * Websocket Module
+ */
 @Module({
-  imports: [TypeOrmModule.forFeature([SysUserRole])],
-  providers,
-  exports: providers,
+  imports: [TypeOrmModule.forFeature([SysUserRole, SysRoleMenu])],
+  providers: [AdminWsGateway, AuthService, AdminWsService],
+  exports: [AdminWsGateway, AuthService, AdminWsService],
 })
 export class WsModule {}

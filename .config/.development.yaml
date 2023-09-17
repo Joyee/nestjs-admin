@@ -40,3 +40,7 @@ LOGGER_CONFIG:
 
 JWT_CONFIG:
   secret: 'admin123456'
+
+WS_CONFIG:
+  port: 7002
+  path: '/ws-api'

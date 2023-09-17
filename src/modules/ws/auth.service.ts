@@ -1,8 +1,10 @@
-import { JwtService } from '@nestjs/jwt';
-import { isEmpty } from 'lodash';
+import { Injectable } from '@nestjs/common';
 import { IAdminUser } from '../admin/admin.instance';
-import { SocketException } from '../../common/exception/socket.exception';
+import { isEmpty } from 'lodash';
+import { BusinessException } from '@/common/exception/business.exception';
+import { JwtService } from '@nestjs/jwt';
 
+@Injectable()
 export class AuthService {
   constructor(private jwtService: JwtService) {}
 
@@ -10,12 +12,14 @@ export class AuthService {
     token: string | string[] | undefined,
   ): IAdminUser | never {
     if (isEmpty(token)) {
-      throw new SocketException(11001);
+      throw new BusinessException(11001);
     }
+
     try {
+      // 挂载对象到当前请求上
       return this.jwtService.verify(Array.isArray(token) ? token[0] : token);
     } catch (error) {
-      throw new SocketException(11001);
+      throw new BusinessException(11001);
     }
   }
 }
