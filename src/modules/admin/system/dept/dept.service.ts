@@ -50,7 +50,7 @@ export class SysDeptService {
           'dept.id = role_dept.department_id',
         )
         .andWhere('role_dept.role_id IN (:...roleIds)', { roleIds })
-        .orderBy('dept.order_name', 'ASC')
+        .orderBy('dept.order_num', 'ASC')
         .getMany();
     }
 

@@ -4,7 +4,7 @@ import { In, Repository } from 'typeorm';
 import { UAParser } from 'ua-parser-js';
 import SysLoginLog from '@/entities/admin/sys-login-log.entity';
 import { UtilService } from '@/shared/services/util.service';
-import { LoginLogInfo } from './log.class';
+import { LoginLogInfo, TaskLogInfo } from './log.class';
 import SysUser from '@/entities/admin/sys-user.entity';
 import SysTaskLog from '@/entities/admin/sys-task-log.entity';
 
@@ -45,7 +45,6 @@ export class SysLogService {
       .getRawMany();
     const parser = new UAParser();
     return result.map((e) => {
-      console.log(e);
       const u = parser.setUA(e.login_log_ua).getResult();
       return {
         id: e.login_log_id,
@@ -93,5 +92,42 @@ export class SysLogService {
       detail: err,
     });
     return result;
+  }
+
+  /**
+   * 清空表中所有的数据
+   */
+  async clearLoginLog() {
+    await this.loginLogRepository.clear();
+  }
+
+  /**
+   * 清空表中所有的数据
+   */
+  async clearTaskLog() {
+    await this.taskLogRepository.clear();
+  }
+
+  async page(page: number, count: number): Promise<TaskLogInfo[]> {
+    const result = await this.taskLogRepository
+      .createQueryBuilder('task_log')
+      .leftJoinAndSelect('sys_task', 'task', 'task_log.task_id = task.id')
+      .orderBy('task_log.id', 'DESC')
+      .offset(page * count)
+      .limit(count)
+      .getRawMany();
+    return result.map((e) => ({
+      id: e.task_log_id,
+      taskId: e.task_id,
+      name: e.task_name,
+      createdAt: e.task_log_created_at,
+      consumeTime: e.task_log_consume_time,
+      detail: e.task_log_detail,
+      status: e.task_log_status,
+    }));
+  }
+
+  async countTaskLog() {
+    return await this.taskLogRepository.count();
   }
 }

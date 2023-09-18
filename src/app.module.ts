@@ -16,6 +16,7 @@ import {
 } from '@/shared/logger/logger.instance';
 import { LOGGER_MODULE_OPTIONS } from '@/shared/logger/logger.constants';
 import { WsModule } from './modules/ws/ws.module';
+import { MissionModule } from './mission/mission.module';
 
 @Module({
   imports: [
@@ -79,6 +80,7 @@ import { WsModule } from './modules/ws/ws.module';
     AdminModule,
     WsModule,
     BullModule,
+    MissionModule.forRoot(),
   ],
   controllers: [],
   providers: [],

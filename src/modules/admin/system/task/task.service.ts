@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { ModuleRef, Reflector } from '@nestjs/core';
+import { isEmpty } from 'lodash';
 import { UnknownElementException } from '@nestjs/core/errors/exceptions/unknown-element.exception';
 import { CreateTaskDto, UpdateTaskDto } from './task.dto';
 import SysTask from '@/entities/admin/sys-task.entity';
@@ -15,7 +16,6 @@ import { RedisService } from '@/shared/services/redis.service';
 import { LoggerService } from '@/shared/logger/logger.service';
 import { BusinessException } from '@/common/exception/business.exception';
 import { MISSION_KEY_METADATA } from '@/common/constants/decorator.constants';
-import { isEmpty } from 'lodash';
 
 @Injectable()
 export class SysTaskService implements OnModuleInit {
@@ -205,6 +205,8 @@ export class SysTaskService implements OnModuleInit {
     nameOrInstance: string | unknown,
     exec: string,
   ): Promise<void | never> {
+    console.log('checkHasMissionMeta:', nameOrInstance);
+    console.log(exec);
     try {
       let service: any;
       if (typeof nameOrInstance === 'string') {
@@ -212,6 +214,7 @@ export class SysTaskService implements OnModuleInit {
       } else {
         service = nameOrInstance;
       }
+      console.log('service:', service);
       // 所执行的任务不存在
       if (!service || !(exec in service)) {
         throw new BusinessException(10102);
@@ -226,6 +229,7 @@ export class SysTaskService implements OnModuleInit {
         throw new BusinessException(10101);
       }
     } catch (error) {
+      console.log(error);
       if (error instanceof UnknownElementException) {
         // 任务不存在
         throw new BusinessException(10102);

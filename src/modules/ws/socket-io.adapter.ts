@@ -26,7 +26,6 @@ export class SocketIoAdapter extends IoAdapter {
     port = this.configServie.get<number>('socket.port');
     options.path = this.configServie.get<string>('socket.path');
     options.namespace = '/admin';
-    console.log(options);
     return super.createIOServer(port, options);
   }
 }

@@ -3,7 +3,7 @@ import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { ADMIN_PREFIX } from '@/modules/admin/admin.constants';
 import { ApiOkResponsePaginated, PaginatedResponseDto } from '@/helper';
 import { LogDisabled } from '../../core/decorators/log-disabled.decorator';
-import { LoginLogInfo } from './log.class';
+import { LoginLogInfo, TaskLogInfo } from './log.class';
 import { SysLogService } from './log.service';
 import { PageOptionsDto } from '@/common/dto/page.dto';
 
@@ -28,6 +28,24 @@ export class SysLogController {
         total: count,
         size: dto.limit,
         page: dto.page,
+      },
+    };
+  }
+
+  @ApiOperation({ summary: '分页查询任务日志' })
+  @ApiOkResponsePaginated(TaskLogInfo)
+  @Get('task/page')
+  async taskLogPage(
+    @Query() dto: PageOptionsDto,
+  ): Promise<PaginatedResponseDto<TaskLogInfo>> {
+    const list = await this.logService.page(dto.page - 1, dto.limit);
+    const total = await this.logService.countTaskLog();
+    return {
+      list,
+      pagination: {
+        total,
+        page: dto.page,
+        size: dto.limit,
       },
     };
   }
