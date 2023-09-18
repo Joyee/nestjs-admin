@@ -5,6 +5,7 @@ import { SystemModule } from './system/system.module';
 import { AuthGuard } from './core/guards/auth.guard';
 import { ADMIN_PREFIX } from '@/modules/admin/admin.constants';
 import { AccountModule } from './account/account.module';
+import { NetdiskModule } from './netdisk/netdisk.module';
 
 @Module({
   imports: [
@@ -20,6 +21,10 @@ import { AccountModule } from './account/account.module';
             path: 'account',
             module: AccountModule,
           },
+          {
+            path: 'netdisk',
+            module: NetdiskModule,
+          },
         ],
       },
       // like this url /admin/captcha/img
@@ -31,6 +36,7 @@ import { AccountModule } from './account/account.module';
     LoginModule,
     SystemModule,
     AccountModule,
+    NetdiskModule,
   ],
   controllers: [],
   providers: [
